@@ -1,2 +1,22 @@
-Ecrire ici votre réponse à la question UML.
+UML Initial (avant modification)
 
+    Structure simple : Moins de classes et de relations.
+    Gestion des événements récurrents : La répétition et la terminaison sont directement gérées dans la classe Event.
+    Exceptions : Gérées dans Event via un Set<LocalDate>.
+    Avantages : Facile à comprendre et à implémenter pour des événements simples.
+    Inconvénients : Manque de flexibilité pour gérer des événements complexes avec des règles de répétition avancées.
+
+UML Modifié (après modification)
+
+    Structure plus complexe : Ajout de classes comme Repetition et Termination pour séparer les responsabilités.
+    Gestion des événements récurrents : La répétition est maintenant déléguée à la classe Repetition et la terminaison à Termination.
+    Exceptions : Toujours gérées, mais de manière plus modulaire.
+    Avantages : Plus flexible, mieux adapté à des événements complexes et évolutifs.
+    Inconvénients : Plus difficile à comprendre et à implémenter pour des besoins simples.
+
+Conclusion
+
+    UML initial : Simple et direct, adapté aux besoins basiques.
+    UML modifié : Plus modulable et extensible, adapté aux besoins plus complexes.
+
+L'UML modifié est plus adapté pour un système évolutif, mais l'UML initial reste plus simple pour des cas d'utilisation simples.
