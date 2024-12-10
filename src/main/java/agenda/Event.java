@@ -1,104 +1,113 @@
 package agenda;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Event {
+    private String title;
+    private LocalDateTime start;
+    private Duration duration;
+    private ChronoUnit repetitionUnit;
+    private LocalDateTime terminationDateTime;
+    private Integer numberOfRepetitions;
+    private Set<LocalDate> exceptions;
+    private Repetition repetition;
 
-    /**
-     * The myTitle of this event
-     */
-    private String myTitle;
-    
-    /**
-     * The starting time of the event
-     */
-    private LocalDateTime myStart;
-
-    /**
-     * The durarion of the event 
-     */
-    private Duration myDuration;
-
-
-    /**
-     * Constructs an event
-     *
-     * @param title the title of this event
-     * @param start the start time of this event
-     * @param duration the duration of this event
-     */
     public Event(String title, LocalDateTime start, Duration duration) {
-        this.myTitle = title;
-        this.myStart = start;
-        this.myDuration = duration;
+        this.title = title;
+        this.start = start;
+        this.duration = duration;
+        this.exceptions = new HashSet<>();
     }
 
-    public void setRepetition(ChronoUnit frequency) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    public void setRepetition(ChronoUnit repetitionUnit) {
+        this.repetitionUnit = repetitionUnit;
+        this.repetition = new Repetition(repetitionUnit);  // Crée une nouvelle répétition
     }
 
-    public void addException(LocalDate date) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    public void setTermination(LocalDateTime terminationDateTime) {
+        this.terminationDateTime = terminationDateTime;
     }
 
-    public void setTermination(LocalDate terminationInclusive) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    public void setTermination(int numberOfRepetitions) {
+        this.numberOfRepetitions = numberOfRepetitions;
     }
 
-    public void setTermination(long numberOfOccurrences) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    public void addException(LocalDate exceptionDate) {
+        this.exceptions.add(exceptionDate);
     }
 
-    public int getNumberOfOccurrences() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    public boolean isInDay(LocalDate date) {
+        // Vérifie si la date est une exception
+        if (exceptions.contains(date)) {
+            return false;
+        }
+
+        // Si la date correspond à la date de terminaison, l'événement a lieu ce jour-là
+        if (terminationDateTime != null && terminationDateTime.toLocalDate().equals(date)) {
+            return true;
+        }
+
+        // Vérifie si l'événement a lieu le jour de départ
+        if (start.toLocalDate().equals(date)) {
+            return true;
+        }
+
+        // Calcul des répétitions
+        LocalDate eventDate = start.toLocalDate();
+        // Vérifie les répétitions tant que la date est avant ou égale à la date de terminaison
+        while (eventDate.isBefore(date) || eventDate.equals(date)) {
+            eventDate = eventDate.plus(1, repetitionUnit);  // Ajoute la durée de répétition
+
+            // Si la date correspond à la date de terminaison, on permet l'occurrence
+            if (terminationDateTime != null && eventDate.equals(terminationDateTime.toLocalDate())) {
+                return true;
+            }
+
+            // Si on dépasse la date de terminaison, on arrête
+            if (terminationDateTime != null && eventDate.isAfter(terminationDateTime.toLocalDate())) {
+                break;
+            }
+
+            // Vérifie si l'événement est dans la période de terminaison
+            if (terminationDateTime != null && eventDate.isAfter(terminationDateTime.toLocalDate())) {
+                break;
+            }
+
+            // Vérification du nombre de répétitions
+            if (numberOfRepetitions != null && ChronoUnit.DAYS.between(start.toLocalDate(), eventDate) / repetitionUnit.getDuration().toDays() >= numberOfRepetitions) {
+                break;  // Si le nombre de répétitions est atteint, on arrête
+            }
+
+            // Si l'événement se produit à la date recherchée, renvoie vrai
+            if (eventDate.equals(date)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public LocalDate getTerminationDate() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        if (terminationDateTime != null) {
+            return terminationDateTime.toLocalDate();
+        }
+        return start.toLocalDate().plusWeeks(numberOfRepetitions - 1);
     }
 
-    /**
-     * Tests if an event occurs on a given day
-     *
-     * @param aDay the day to test
-     * @return true if the event occurs on that day, false otherwise
-     */
-    public boolean isInDay(LocalDate aDay) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
-    }
-   
-    /**
-     * @return the myTitle
-     */
-    public String getTitle() {
-        return myTitle;
-    }
-
-    /**
-     * @return the myStart
-     */
-    public LocalDateTime getStart() {
-        return myStart;
-    }
-
-
-    /**
-     * @return the myDuration
-     */
-    public Duration getDuration() {
-        return myDuration;
+    public int getNumberOfOccurrences() {
+        if (terminationDateTime != null) {
+            return (int) ChronoUnit.WEEKS.between(start.toLocalDate(), terminationDateTime.toLocalDate()) + 1;
+        }
+        return numberOfRepetitions;
     }
 
     @Override
     public String toString() {
-        return "Event{title='%s', start=%s, duration=%s}".formatted(myTitle, myStart, myDuration);
+        return title;
     }
 }

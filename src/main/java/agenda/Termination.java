@@ -2,52 +2,33 @@ package agenda;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
 
 public class Termination {
 
-    public LocalDate terminationDateInclusive() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    private final LocalDate endDate;  // Date de terminaison de l'événement
+    private final int occurrencesLimit;  // Nombre d'occurrences avant la terminaison
+
+    // Constructeur pour une terminaison par date
+    public Termination(LocalDate endDate) {
+        this.endDate = endDate;
+        this.occurrencesLimit = -1;  // Pas de limite sur le nombre d'occurrences
     }
 
-    public long numberOfOccurrences() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    // Constructeur pour une terminaison par nombre d'occurrences
+    public Termination(int occurrencesLimit) {
+        this.occurrencesLimit = occurrencesLimit;
+        this.endDate = null;  // Pas de date de terminaison fixe
     }
 
-
-    /**
-     * Constructs a fixed termination event ending at a given date
-     * @param start the start time of this event
-     * @param frequency one of :
-     * <UL>
-     * <LI>ChronoUnit.DAYS for daily repetitions</LI>
-     * <LI>ChronoUnit.WEEKS for weekly repetitions</LI>
-     * <LI>ChronoUnit.MONTHS for monthly repetitions</LI>
-     * </UL>
-     * @param terminationInclusive the date when this event ends
-     * @see ChronoUnit#between(Temporal, Temporal)
-     */
-    public Termination(LocalDate start, ChronoUnit frequency, LocalDate terminationInclusive) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    // Vérifie si l'événement est terminé à la date donnée
+    public boolean isTerminated(LocalDate startDate) {
+        if (endDate != null) {
+            return !startDate.isBefore(endDate);  // L'événement est terminé si la date de départ dépasse la date de terminaison
+        }
+        if (occurrencesLimit != -1) {
+            // Vérifie si l'événement a atteint le nombre d'occurrences
+            return ChronoUnit.DAYS.between(startDate, LocalDate.now()) >= occurrencesLimit;
+        }
+        return false;  // Aucun critère de terminaison n'est défini
     }
-
-    /**
-     * Constructs a fixed termination event ending after a number of iterations
-     * @param start the start time of this event
-     * @param frequency one of :
-     * <UL>
-     * <LI>ChronoUnit.DAYS for daily repetitions</LI>
-     * <LI>ChronoUnit.WEEKS for weekly repetitions</LI>
-     * <LI>ChronoUnit.MONTHS for monthly repetitions</LI>
-     * </UL>
-     * @param numberOfOccurrences the number of occurrences of this repetitive event
-     */
-    public Termination(LocalDate start, ChronoUnit frequency, long numberOfOccurrences) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
-    }
-
 }

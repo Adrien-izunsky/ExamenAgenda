@@ -1,46 +1,33 @@
 package agenda;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Repetition {
+    private final ChronoUnit frequency;
+    private Set<LocalDate> exceptions;  // Pour stocker les dates d'exception où l'événement ne doit pas se produire
+
+    public Repetition(ChronoUnit frequency) {
+        this.frequency = frequency;
+        this.exceptions = new HashSet<>();
+    }
+
     public ChronoUnit getFrequency() {
-        return myFrequency;
+        return frequency;
     }
 
-    /**
-     * Stores the frequency of this repetition, one of :
-     * <UL>
-     * <LI>ChronoUnit.DAYS for daily repetitions</LI>
-     * <LI>ChronoUnit.WEEKS for weekly repetitions</LI>
-     * <LI>ChronoUnit.MONTHS for monthly repetitions</LI>
-     * </UL>
-     */
-    private final ChronoUnit myFrequency;
-
-    public Repetition(ChronoUnit myFrequency) {
-        this.myFrequency = myFrequency;
-    }
-
-    /**
-     * Les exceptions à la répétition
-     * @param date un date à laquelle l'événement ne doit pas se répéter
-     */
     public void addException(LocalDate date) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        exceptions.add(date);  // Ajoute une exception pour que l'événement ne se répète pas ce jour-là
     }
 
-    /**
-     * La terminaison d'une répétition (optionnelle)
-     * @param termination la terminaison de la répétition
-     */
-    public void setTermination(Termination termination) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    public boolean isException(LocalDate date) {
+        return exceptions.contains(date);  // Vérifie si la date est une exception
+    }
 
+    // Calcule la prochaine occurrence de l'événement à partir d'une date donnée
+    public LocalDate getNextOccurrence(LocalDate startDate) {
+        return startDate.plus(1, frequency);  // Retourne la date de la prochaine répétition
     }
 }

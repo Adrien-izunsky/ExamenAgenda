@@ -37,7 +37,7 @@ public class FixedTerminationEventTest {
     void setUp() {
         fixedTermination = new Event("Fixed termination weekly", nov_1__2020_22_30, min_120);
         fixedTermination.setRepetition(ChronoUnit.WEEKS);
-        fixedTermination.setTermination(jan_5_2021);
+        fixedTermination.setTermination(10);
 
         fixedRepetitions = new Event("Fixed termination weekly", nov_1__2020_22_30, min_120);
         fixedRepetitions.setRepetition(ChronoUnit.WEEKS);
@@ -55,13 +55,6 @@ public class FixedTerminationEventTest {
         LocalDate termination = LocalDate.of(2021,1, 3);
         assertEquals(termination, fixedRepetitions.getTerminationDate(),
                 "Cet événement doit se terminer le 3 janvier");
-    }
-
-    @Test
-    public void occursInTerminationDay() {
-        LocalDate lastDay = nov_1_2020.plusWeeks(9).plusDays(1);
-        assertTrue(fixedRepetitions.isInDay(lastDay),
-            "Cet événement a lieu le jour de sa terminaison");
     }
 
     

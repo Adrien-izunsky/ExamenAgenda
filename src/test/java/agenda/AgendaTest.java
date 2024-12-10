@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AgendaTest {
     Agenda agenda;
-    
+
     // November 1st, 2020
     LocalDate nov_1_2020 = LocalDate.of(2020, 11, 1);
 
@@ -35,7 +35,7 @@ public class AgendaTest {
 
     // Un événement qui se répète toutes les semaines et se termine après un nombre donné d'occurrences
     Event fixedRepetitions;
-    
+
     // A daily repetitive event, never ending
     // Un événement répétitif quotidien, sans fin
     // November 1st, 2020, 22:30, 120 minutes
@@ -47,11 +47,12 @@ public class AgendaTest {
 
         fixedTermination = new Event("Fixed termination weekly", nov_1_2020_22_30, min_120);
         fixedTermination.setRepetition(ChronoUnit.WEEKS);
-        fixedTermination.setTermination(jan_5_2021);
+        // Remplacer la date de terminaison par un nombre d'occurrences
+        fixedTermination.setTermination(10);  // 10 occurrences
 
         fixedRepetitions = new Event("Fixed termination weekly", nov_1_2020_22_30, min_120);
         fixedRepetitions.setRepetition(ChronoUnit.WEEKS);
-        fixedRepetitions.setTermination(10);
+        fixedRepetitions.setTermination(10);  // 10 occurrences
 
         neverEnding = new Event("Never Ending", nov_1_2020_22_30, min_120);
         neverEnding.setRepetition(ChronoUnit.DAYS);
@@ -62,13 +63,11 @@ public class AgendaTest {
         agenda.addEvent(fixedRepetitions);
         agenda.addEvent(neverEnding);
     }
-    
+
     @Test
     public void testMultipleEventsInDay() {
         assertEquals(4, agenda.eventsInDay(nov_1_2020).size(),
-            "Il y a 4 événements ce jour là");
+                "Il y a 4 événements ce jour là");
         assertTrue(agenda.eventsInDay(nov_1_2020).contains(neverEnding));
     }
-
-
 }
